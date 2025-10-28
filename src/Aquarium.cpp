@@ -27,7 +27,7 @@ void PlayerCreature::setDirection(float dx, float dy) {
 void PlayerCreature::move() {
     m_x += m_dx * m_speed;
     m_y += m_dy * m_speed;
-    this->bounce();
+    this->handleBounds();
 }
 
 void PlayerCreature::reduceDamageDebounce() {
@@ -90,7 +90,7 @@ void NPCreature::move() {
     }else {
         this->m_sprite->setFlipped(false);
     }
-    bounce();
+    this->handleBounds(); //Mantiene dentro de los bordes
 }
 
 void NPCreature::draw() const {
@@ -123,7 +123,7 @@ void BiggerFish::move() {
         this->m_sprite->setFlipped(false);
     }
 
-    bounce();
+    this->handleBounds();
 }
 
 void BiggerFish::draw() const {
@@ -170,11 +170,37 @@ void Aquarium::addAquariumLevel(std::shared_ptr<AquariumLevel> level){
 }
 
 void Aquarium::update() {
+
     for (auto& creature : m_creatures) {
         creature->move();
     }
+
+    for (size_t i = 0; i < m_creatures.size(); ++i) {
+        for (size_t j = i + 1; j < m_creatures.size(); ++j) {
+            auto a = m_creatures[i];
+            auto b = m_creatures[j];
+
+            if (!std::dynamic_pointer_cast<NPCreature>(a) || !std::dynamic_pointer_cast<NPCreature>(b)) {
+                continue;
+            }
+// Revisa colisiones
+            if (checkCollision(a, b)) {
+
+                a->bounce();
+                b->bounce();
+
+                a->move();
+                b->move();
+
+                ofLogVerbose() << "NPC-NPC collision at (" 
+                               << a->getX() << "," << a->getY() << ") and (" 
+                               << b->getX() << "," << b->getY() << ")" << std::endl;
+            }
+        }
+    }
     this->Repopulate();
 }
+
 
 void Aquarium::draw() const {
     for (const auto& creature : m_creatures) {
