@@ -2,9 +2,13 @@
 
 #include "ofMain.h"
 #include "Aquarium.h"
+#include "ofSoundPlayer.h"
 
 
 class ofApp : public ofBaseApp{
+
+	private:
+		ofSoundPlayer bgMusic;
 
 	public:
 		void setup() override;

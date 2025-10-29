@@ -8,6 +8,11 @@ void ofApp::setup(){
     backgroundImage.load("background.png");
     backgroundImage.resize(ofGetWindowWidth(), ofGetWindowHeight());
 
+    bgMusic.load("sounds/sea_waves.wav.wav");
+    bgMusic.setVolume(0.8f);
+    bgMusic.setLoop(true);
+    bgMusic.play();
+
 
     std::shared_ptr<Aquarium> myAquarium;
     std::shared_ptr<PlayerCreature> player;
