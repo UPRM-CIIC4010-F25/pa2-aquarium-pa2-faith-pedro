@@ -15,7 +15,9 @@ string AquariumCreatureTypeToString(AquariumCreatureType t){
 
 // PlayerCreature Implementation
 PlayerCreature::PlayerCreature(float x, float y, int speed, std::shared_ptr<GameSprite> sprite)
-: Creature(x, y, speed, 10.0f, 1, sprite) {}
+: Creature(x, y, speed, 10.0f, 1, sprite) {
+    m_base_speed = speed;
+}
 
 
 void PlayerCreature::setDirection(float dx, float dy) {
@@ -36,18 +38,40 @@ void PlayerCreature::reduceDamageDebounce() {
     }
 }
 
+void PlayerCreature::activatePowerUp() {
+    if (!m_powered_up) {
+        m_powered_up = true;
+        m_speed = static_cast<int>(m_base_speed * 1.5f);
+        m_powerup_timer = POWERUP_DURATION;
+        ofLogNotice() << "Power-up activated. Speed increased: " << m_speed;
+    }
+}
+
 void PlayerCreature::update() {
     this->reduceDamageDebounce();
+
+    if (m_powered_up) {
+        m_powerup_timer--;
+        if (m_powerup_timer <= 0) {
+            m_powered_up = false;
+            m_speed = m_base_speed;
+            ofLogNotice() << "Power-up expired. Speed: " << m_speed;
+        }
+    }
+
     this->move();
 }
 
 
 void PlayerCreature::draw() const {
-    
     ofLogVerbose() << "PlayerCreature at (" << m_x << ", " << m_y << ") with speed " << m_speed << std::endl;
+    
     if (this->m_damage_debounce > 0) {
-        ofSetColor(ofColor::red); // Flash red if in damage debounce
+        ofSetColor(ofColor::red);
+    } else if (m_powered_up) {
+        ofSetColor(ofColor::yellow);
     }
+
     if (m_sprite) {
         m_sprite->draw(m_x, m_y);
     }
@@ -302,6 +326,12 @@ std::shared_ptr<GameEvent> DetectAquariumCollisions(std::shared_ptr<Aquarium> aq
 
 void AquariumGameScene::Update(){
     std::shared_ptr<GameEvent> event;
+
+    // Check power-up based on score
+    int currentScore = this->m_player->getScore();
+    if (currentScore > 0 && currentScore % 10 == 0 && !this->m_player->isPoweredUp()) {
+        this->m_player->activatePowerUp();
+    }
 
     this->m_player->update();
 

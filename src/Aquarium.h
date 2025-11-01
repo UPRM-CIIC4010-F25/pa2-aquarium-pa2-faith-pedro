@@ -67,12 +67,18 @@ public:
     void loseLife(int debounce);
     void increasePower(int value) { m_power += value; }
     void reduceDamageDebounce();
-    
+    void activatePowerUp();
+    bool isPoweredUp() const { return m_powered_up; }
+
 private:
     int m_score = 0;
     int m_lives = 3;
     int m_power = 1; // mark current power lvl
     int m_damage_debounce = 0; // frames to wait after eating
+    bool m_powered_up = false;
+    int m_base_speed = 0;
+    int m_powerup_timer = 0;
+    static const int POWERUP_DURATION = 180; // 3 seconds
 };
 
 class NPCreature : public Creature {
