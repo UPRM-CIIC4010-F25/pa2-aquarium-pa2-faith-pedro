@@ -8,6 +8,10 @@ string AquariumCreatureTypeToString(AquariumCreatureType t){
             return "BiggerFish";
         case AquariumCreatureType::NPCreature:
             return "BaseFish";
+        case AquariumCreatureType::PescaoCute:
+            return "PescaoCute";
+        case AquariumCreatureType::ClownFish:
+            return "ClownFish";
         default:
             return "UknownFish";
     }
@@ -160,15 +164,20 @@ void BiggerFish::draw() const {
 AquariumSpriteManager::AquariumSpriteManager(){
     this->m_npc_fish = std::make_shared<GameSprite>("base-fish.png", 70,70);
     this->m_big_fish = std::make_shared<GameSprite>("bigger-fish.png", 120, 120);
+    this->m_pescao_cute = std::make_shared<GameSprite>("pescao-cute.png", 60, 60);
+    this->m_clown_fish = std::make_shared<GameSprite>("pez-payaso-pixelao.png", 55, 55);
 }
 
 std::shared_ptr<GameSprite> AquariumSpriteManager::GetSprite(AquariumCreatureType t){
     switch(t){
         case AquariumCreatureType::BiggerFish:
             return std::make_shared<GameSprite>(*this->m_big_fish);
-            
         case AquariumCreatureType::NPCreature:
             return std::make_shared<GameSprite>(*this->m_npc_fish);
+        case AquariumCreatureType::PescaoCute:
+            return std::make_shared<GameSprite>(*this->m_pescao_cute);
+        case AquariumCreatureType::ClownFish:
+            return std::make_shared<GameSprite>(*this->m_clown_fish);
         default:
             return nullptr;
     }
@@ -269,11 +278,16 @@ void Aquarium::SpawnCreature(AquariumCreatureType type) {
         case AquariumCreatureType::BiggerFish:
             this->addCreature(std::make_shared<BiggerFish>(x, y, speed, this->m_sprite_manager->GetSprite(AquariumCreatureType::BiggerFish)));
             break;
+        case AquariumCreatureType::PescaoCute:
+            this->addCreature(std::make_shared<PescaoCute>(x, y, speed, this->m_sprite_manager->GetSprite(AquariumCreatureType::PescaoCute)));
+            break;
+        case AquariumCreatureType::ClownFish:
+            this->addCreature(std::make_shared<ClownFish>(x, y, speed, this->m_sprite_manager->GetSprite(AquariumCreatureType::ClownFish)));
+            break;
         default:
             ofLogError() << "Unknown creature type to spawn!";
             break;
     }
-
 }
 
 
@@ -449,7 +463,97 @@ std::vector<AquariumCreatureType> Level_1::Repopulate() {
     return toRepopulate;
 }
 
+//PescaoCute
+PescaoCute::PescaoCute(float x, float y, int speed, std::shared_ptr<GameSprite> sprite)
+: NPCreature(x, y, speed, sprite) {
+    m_dx = (rand() % 3 - 1);
+    m_dy = (rand() % 3 - 1);
+    normalize();
+    m_value = 2;
+    m_creatureType = AquariumCreatureType::PescaoCute;
+}
+
+void PescaoCute::move() {
+    if (directionChangeTimer.tick()) {
+        //Que cambie de dirección al moverse
+        m_dx = (rand() % 3 - 1) * 1.5f;
+        m_dy = (rand() % 3 - 1) * 1.5f;
+        normalize();
+    }
+    
+    m_x += m_dx * m_speed;
+    m_y += m_dy * m_speed;
+    
+    if(m_dx < 0) {
+        m_sprite->setFlipped(true);
+    } else {
+        m_sprite->setFlipped(false);
+    }
+    
+    handleBounds();
+}
+
+void PescaoCute::draw() const {
+    m_sprite->draw(m_x, m_y);
+}
+
+//ClownFish
+ClownFish::ClownFish(float x, float y, int speed, std::shared_ptr<GameSprite> sprite)
+: NPCreature(x, y, speed, sprite) {
+    m_dx = (rand() % 3 - 1);
+    m_dy = (rand() % 3 - 1);
+    normalize();
+    m_value = 2;
+    m_creatureType = AquariumCreatureType::ClownFish;
+}
+
+void ClownFish::move() {
+    //Movimiento base pero más lento
+    m_x += m_dx * (m_speed * 0.75f);
+    m_y += m_dy * (m_speed * 0.75f);
+    
+    if(m_dx < 0) {
+        m_sprite->setFlipped(true);
+    } else {
+        m_sprite->setFlipped(false);
+    }
+    
+    handleBounds();
+}
+
+void ClownFish::draw() const {
+    m_sprite->draw(m_x, m_y);
+}
+
 std::vector<AquariumCreatureType> Level_2::Repopulate() {
+    std::vector<AquariumCreatureType> toRepopulate;
+    for(std::shared_ptr<AquariumLevelPopulationNode> node : this->m_levelPopulation){
+        int delta = node->population - node->currentPopulation;
+        if(delta >0){
+            for(int i=0; i<delta; i++){
+                toRepopulate.push_back(node->creatureType);
+            }
+            node->currentPopulation += delta;
+        }
+    }
+    return toRepopulate;
+}
+
+std::vector<AquariumCreatureType> Level_3::Repopulate() {
+    std::vector<AquariumCreatureType> toRepopulate;
+    for(std::shared_ptr<AquariumLevelPopulationNode> node : this->m_levelPopulation){
+        int delta = node->population - node->currentPopulation;
+        if(delta >0){
+            for(int i=0; i<delta; i++){
+                toRepopulate.push_back(node->creatureType);
+            }
+            node->currentPopulation += delta;
+        }
+    }
+    return toRepopulate;
+}
+
+std::vector<AquariumCreatureType> Level_4::Repopulate() {
     std::vector<AquariumCreatureType> toRepopulate;
     for(std::shared_ptr<AquariumLevelPopulationNode> node : this->m_levelPopulation){
         int delta = node->population - node->currentPopulation;
