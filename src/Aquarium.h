@@ -1,4 +1,6 @@
+#ifndef NOMINMAX
 #define NOMINMAX // To avoid min/max macro conflict on Windows
+#endif
 
 #include <vector>
 #include <memory>
@@ -37,7 +39,7 @@ class AquariumLevel : public GameLevel {
         bool isCompleted() override;
         void populationReset();
         void levelReset(){m_level_score=0;this->populationReset();}
-        virtual std::vector<AquariumCreatureType> Repopulate() = 0;
+        virtual std::vector<AquariumCreatureType> Repopulate();
     protected:
         std::vector<std::shared_ptr<AquariumLevelPopulationNode>> m_levelPopulation;
         int m_level_score;
@@ -151,23 +153,28 @@ std::shared_ptr<GameEvent> DetectAquariumCollisions(std::shared_ptr<Aquarium> aq
 
 
 class AquariumGameScene : public GameScene {
-    public:
-        AquariumGameScene(std::shared_ptr<PlayerCreature> player, std::shared_ptr<Aquarium> aquarium, string name)
-        : m_player(std::move(player)) , m_aquarium(std::move(aquarium)), m_name(name){}
-        std::shared_ptr<GameEvent> GetLastEvent(){return m_lastEvent;}
-        void SetLastEvent(std::shared_ptr<GameEvent> event){this->m_lastEvent = event;}
-        std::shared_ptr<PlayerCreature> GetPlayer(){return this->m_player;}
-        std::shared_ptr<Aquarium> GetAquarium(){return this->m_aquarium;}
-        string GetName()override {return this->m_name;}
-        void Update() override;
-        void Draw() override;
+public:
+    AquariumGameScene(std::shared_ptr<PlayerCreature> player,
+                      std::shared_ptr<Aquarium> aquarium,
+                      string name);
+
+    std::shared_ptr<GameEvent> GetLastEvent(){ return m_lastEvent; }
+    void SetLastEvent(std::shared_ptr<GameEvent> event){ this->m_lastEvent = event; }
+    std::shared_ptr<PlayerCreature> GetPlayer(){ return this->m_player; }
+    std::shared_ptr<Aquarium> GetAquarium(){ return this->m_aquarium; }
+    string GetName() override { return this->m_name; }
+
+    void Update() override;
+    void Draw() override;
     private:
+        
         void paintAquariumHUD();
         std::shared_ptr<PlayerCreature> m_player;
         std::shared_ptr<Aquarium> m_aquarium;
         std::shared_ptr<GameEvent> m_lastEvent;
         string m_name;
         AwaitFrames updateControl{5};
+        
 };
 
 
@@ -177,7 +184,7 @@ class Level_0 : public AquariumLevel  {
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::NPCreature, 10));
 
         };
-        std::vector<AquariumCreatureType> Repopulate() override;
+
 
 };
 class Level_1 : public AquariumLevel  {
@@ -186,7 +193,7 @@ class Level_1 : public AquariumLevel  {
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::NPCreature, 20));
 
         };
-        std::vector<AquariumCreatureType> Repopulate() override;
+
 
 
 };
@@ -212,7 +219,7 @@ class Level_2 : public AquariumLevel  {
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::NPCreature, 30));
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::BiggerFish, 5));
         };
-        std::vector<AquariumCreatureType> Repopulate() override;
+
 };
 
 class Level_3 : public AquariumLevel {
@@ -222,7 +229,7 @@ class Level_3 : public AquariumLevel {
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::BiggerFish, 4));
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::PescaoCute, 6));
         };
-        std::vector<AquariumCreatureType> Repopulate() override;
+
 };
 
 class Level_4 : public AquariumLevel {
@@ -233,6 +240,6 @@ class Level_4 : public AquariumLevel {
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::PescaoCute, 5));
             this->m_levelPopulation.push_back(std::make_shared<AquariumLevelPopulationNode>(AquariumCreatureType::ClownFish, 7));
         };
-        std::vector<AquariumCreatureType> Repopulate() override;
+
 
 };
