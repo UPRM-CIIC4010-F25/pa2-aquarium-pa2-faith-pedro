@@ -25,7 +25,7 @@ Grading
 | Student Number | Student Name | Student Email |
 |-|-|-|
 |(802-24-3780)| (Faith Martinez)| (faith.martinez@upr.edu) |
-|(STUDENT NUMBER HERE)| (STUDENT NAME HERE)| (STUDENT EMAIL HERE) |
+|(803-21-4276)| (Pedro Villalta)| (pedro.villalta@upr.edu) |
 
 ---
 
