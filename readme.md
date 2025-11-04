@@ -24,7 +24,7 @@ Grading
 ## Team Info
 | Student Number | Student Name | Student Email |
 |-|-|-|
-|(STUDENT NUMBER HERE)| (STUDENT NAME HERE)| (STUDENT EMAIL HERE) |
+|(802-24-3780)| (Faith Martinez)| (faith.martinez@upr.edu) |
 |(STUDENT NUMBER HERE)| (STUDENT NAME HERE)| (STUDENT EMAIL HERE) |
 
 ---
@@ -37,3 +37,8 @@ If a partner has no commits in the repositories, they will receive a 0.
 
 # Student Notes
 If you have any bonus specs, bonus or any details the TA's should know, you should include it here:
+Se añadió un panel HUD en la esquina superior derecha de la pantalla. Los indicadores de vida también se actualizan de manera visual según las vidas restantes:
+🟩 Verde: salud completa
+🟧 Naranja: salud media
+🟥 Rojo: poca salud
+Se implemento esto en "void AquariumGameScene::paintAquariumHUD();"
